@@ -4,6 +4,9 @@ var plateau = [
 	[3/8, 2/8, 3/8],
 ];
 
+var utileAttaque = [[true, true, true], [true, true, true], true, true];
+var utileDefense = [[true, true, true], [true, true, true], true, true];
+
 function RedimensionnerPlateau() {
 	$("body").append("<div id='plateau'></div>");
 
@@ -61,7 +64,7 @@ function CreerPlateau() {
 function AfficherValeurPlateau() {
 	for (var numeroLigne = 0; numeroLigne < plateau.length; numeroLigne++) {
 		for (var numeroColonne = 0; numeroColonne < plateau[numeroLigne].length; numeroColonne++) {
-			if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("active") == false) {
+			if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("active") == false ) {
 				$("#" + numeroLigne + "_" + numeroColonne).html("<p>" + plateau[numeroLigne][numeroColonne] + "</p>");
 			}
 		}
@@ -71,7 +74,7 @@ function AfficherValeurPlateau() {
 }
 
 function ModifierValeurCase(numeroLigne, numeroColonne) {
-	if (plateau[numeroLigne][numeroColonne] > 0 || plateau[numeroLigne][numeroColonne] != null) {
+	if ((plateau[numeroLigne][numeroColonne] > 0 || plateau[numeroLigne][numeroColonne] != null)) {
 		plateau[numeroLigne][numeroColonne] = plateau[numeroLigne][numeroColonne] - (1 / 8);
 
 		if (plateau[numeroLigne][numeroColonne] < 0) {
@@ -130,195 +133,146 @@ function ProbabiliteMaximum() {
 }
 
 function OrdinateurPosePion(numeroLigne, numeroColonne) {
-	ModifierValeurPlateau(numeroLigne, numeroColonne);
-	AfficherValeurPlateau();
-
 	$("#" + numeroLigne + "_" + numeroColonne).html("");
 	$("#" + numeroLigne + "_" + numeroColonne).addClass("active");
 	$("#" + numeroLigne + "_" + numeroColonne).addClass("ordinateur");
 	$("#" + numeroLigne + "_" + numeroColonne).append("<div class='rond'></div>");
 
 	plateau[numeroLigne][numeroColonne] = null;
+
+	utileDefense[0][numeroLigne] = false;
+	utileDefense[1][numeroColonne] = false;
+
+	if (numeroLigne == numeroColonne) {
+		utileDefense[2] = false;
+	}
+
+	if (numeroColonne == (2 - numeroLigne)) {
+		utileDefense[3] = false;
+	}
 }
 
 function VerifierCase(nom) {
 	var pionPose = false;
 
+	if (nom == "ordinateur") {
+		utile = utileAttaque;
+
+		console.log("ATTAQUE");
+	}
+	else {
+		utile = utileDefense;
+		console.log("DEFENSE");
+	}
+
 	//	Ligne
 
-	if (pionPose == false) {
-		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-			for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-				if ($("#" + numeroLigne + "_" + numeroColonne).hasClass(nom) == true) {
-					var _numeroColonnePose = null;
+	var numeroLigne = 0;
 
-					if (numeroColonne == 0) {
-						if ($("#" + numeroLigne + "_1").hasClass(nom)) {
-							_numeroColonnePose = 2;
-						}
-						else if ($("#" + numeroLigne + "_2").hasClass(nom)) {
-							_numeroColonnePose = 1;
-						}
-					}
-					else if(numeroColonne == 1) {
-						if ($("#" + numeroLigne + "_0").hasClass(nom)) {
-							_numeroColonnePose = 2;
-						}
-						else if ($("#" + numeroLigne + "_2").hasClass(nom)) {
-							_numeroColonnePose = 0;
-						}
-					}
-					else {
-						if ($("#" + numeroLigne + "_0").hasClass(nom)) {
-							_numeroColonnePose = 1;
-						}
-						else if ($("#" + numeroLigne + "_1").hasClass(nom)) {
-							_numeroColonnePose = 0;
-						}
-					}
+	while (pionPose == false && numeroLigne < 3) {
+		if (utile[0][numeroLigne] == true) {
 
-					if (_numeroColonnePose != null && $("#" + numeroLigne + "_" + _numeroColonnePose).hasClass("active") == false) {
-						OrdinateurPosePion(numeroLigne, _numeroColonnePose)
+			var _numeroColonnePose = null;
 
-						pionPose = true;
-					}
-				}
+			if ($("#" + numeroLigne + "_0").hasClass(nom) == true && $("#" + numeroLigne + "_1").hasClass(nom) == true) {
+				_numeroColonnePose = 2;
+			}
+			else if ($("#" + numeroLigne + "_0").hasClass(nom) == true && $("#" + numeroLigne + "_2").hasClass(nom) == true) {
+				_numeroColonnePose = 1;
+			}
+			else if ($("#" + numeroLigne + "_1").hasClass(nom) == true && $("#" + numeroLigne + "_2").hasClass(nom) == true) {
+				_numeroColonnePose = 0
+			}
+
+			if (_numeroColonnePose != null && $("#" + numeroLigne + "_" + _numeroColonnePose).hasClass("active") == false) {
+				OrdinateurPosePion(numeroLigne, _numeroColonnePose)
+
+				pionPose = true;
 			}
 		}
+
+		numeroLigne++;
 	}
 
 	//	Colonne
 
-	if (pionPose == false) {
-		for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-			for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-				if ($("#" + numeroLigne + "_" + numeroColonne).hasClass(nom) == true) {
-					var _numeroLignePose = null;
+	var numeroColonne = 0;
 
-					if (numeroLigne == 0) {
-						if ($("#1_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 2;
-						}
-						else if ($("#2_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 1;
-						}
-					}
-					else if (numeroLigne == 1) {
-						if ($("#0_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 2;
-						}
-						else if ($("#2_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 0;
-						}							
-					}
-					else {
-						if ($("#0_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 1;
-						}
-						else if ($("#1_" + numeroColonne).hasClass(nom)) {
-							_numeroLignePose = 0;
-						}
-					}
+	while (pionPose == false && numeroColonne < 3) {
+		if (utile[1][numeroColonne] == true) {
 
-					if (_numeroLignePose != null && $("#" + _numeroLignePose + "_" + numeroColonne).hasClass("active") == false) {
-						OrdinateurPosePion(_numeroLignePose, numeroColonne)
+			var _numeroLignePose = null;
 
-						pionPose = true;
-					}
-				}
+			if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#1_" + numeroColonne).hasClass(nom) == true) {
+				_numeroColonnePose = 2;
+			}
+			else if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#2_" + numeroColonne).hasClass(nom) == true) {
+				_numeroLignePose = 1;
+			}
+			else if ($("#1_" + numeroColonne).hasClass(nom) == true && $("#2_" + numeroColonne).hasClass(nom) == true) {
+				_numeroLignePose = 0
+			}
+
+			if (_numeroLignePose != null && $("#" + _numeroLignePose + "_" + numeroColonne).hasClass("active") == false) {
+				OrdinateurPosePion(_numeroLignePose, numeroColonne)
+
+				pionPose = true;
 			}
 		}
+
+		numeroColonne++;
 	}
 
 	//	Diagonale haut-gauche / bas-droite
 
-	if (pionPose == false) {
-		for (var numero = 0; numero < 3; numero++) {
-			if ($("#" + numero + "_" + numero).hasClass(nom) == true) {
-				var _numeroPose = null;
+	var numero = 0;
 
-				if (numero == 0) {
-					if ($("#1_1").hasClass(nom)) {
-						_numeroPose = 2;
-					}
-					else if ($("#2_2").hasClass(nom)) {
-						_numeroPose = 1;
-					}
-				}
-				else if (numero == 1) {
-					if ($("#0_0").hasClass(nom)) {
-						_numeroPose = 2;
-					}
-					else if ($("#2_2").hasClass(nom)) {
-						_numeroPose = 0;
-					}						
-				}
-				else {
-					if ($("#0_0").hasClass(nom)) {
-						_numeroPose = 1;
-					}
-					else if ($("#1_1").hasClass(nom)) {
-						_numeroPose = 0;
-					}
-				}
+	if (utile[2] == true && pionPose == false) {
 
-				if (_numeroPose != null && $("#" + _numeroPose + "_" + _numeroPose).hasClass("active") == false) {
-					OrdinateurPosePion(_numeroPose, _numeroPose)
+		var _numeroPose = null;
 
-					pionPose = true;						
-				}
-			}
+		if ($("#0_0").hasClass(nom) == true && $("#1_1").hasClass(nom) == true) {
+			_numeroPose = 2;
+		}
+		else if ($("#0_0").hasClass(nom) == true && $("#2_2").hasClass(nom) == true) {
+			_numeroPose = 1;
+		}
+		else if ($("#1_1").hasClass(nom) == true && $("#2_2").hasClass(nom) == true) {
+			_numeroPose = 0;
+		}
+
+		if (_numeroPose != null && $("#" + _numeroPose + "_" + _numeroPose).hasClass("active") == false) {
+			OrdinateurPosePion(_numeroPose, _numeroPose)
+
+			pionPose = true;
 		}
 	}
 
 	//	Diagonale haut-droite / bas-gauche
 
-	if (pionPose == false) {
+	var numeroLigne = 0;
 
-		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-			var numeroColonne = 2 - numeroLigne;
+	if (utile[3] == true && pionPose == false) {
 
-			if ($("#" + numeroLigne + "_" + numeroColonne).hasClass(nom) == true) {
-				var _numeroLignePose = null;
-				var  _numeroColonnePose = null;
+		var _numeroLignePose = null;
 
-				if (numeroLigne == 0) {
-					if ($("#1_1").hasClass(nom)) {
-						_numeroLignePose = 2;
-						_numeroColonnePose = 0;
-					}
-					else if ($("#2_0").hasClass(nom)) {
-						_numeroLignePose = 1;
-						_numeroColonnePose = 1;
-					}
-				}
-				else if (numeroLigne == 1) {
-					if ($("#0_2").hasClass(nom)) {
-						_numeroLignePose = 2;
-						_numeroColonnePose = 0;
-					}
-					else if ($("#2_0").hasClass(nom)) {
-						_numeroLignePose = 0;
-						_numeroColonnePose = 2;
-					}						
-				}
-				else {
-					if ($("#1_1").hasClass(nom)) {
-						_numeroLignePose = 0;
-						_numeroColonnePose = 2;
-					}
-					else if ($("#0_2").hasClass(nom)) {
-						_numeroLignePose = 1;
-						_numeroColonnePose = 1;
-					}
-				}
+		if ($("#0_2").hasClass(nom) == true && $("#1_1").hasClass(nom) == true) {
+			_numeroLignePose = 2;
+			_numeroColonnePose = 0;
+		}
+		else if ($("#0_2").hasClass(nom) == true && $("#2_0").hasClass(nom) == true) {
+			_numeroLignePose = 1;
+			_numeroColonnePose = 1;
+		}
+		else if ($("#1_1").hasClass(nom) == true && $("#2_0").hasClass(nom) == true) {
+			_numeroLignePose = 0;
+			_numeroColonnePose = 2;
+		}
 
-				if (_numeroLignePose != null && _numeroColonnePose != null && $("#" + _numeroLignePose + "_" + _numeroColonnePose).hasClass("active") == false) {
-					OrdinateurPosePion(_numeroLignePose, _numeroColonnePose);
+		if (_numeroLignePose != null && $("#" + _numeroLignePose + "_" + _numeroLignePose).hasClass("active") == false) {
+			OrdinateurPosePion(_numeroLignePose, _numeroColonnePose)
 
-					pionPose = true;						
-				}		
-			}
+			pionPose = true;
 		}
 	}
 
@@ -339,195 +293,13 @@ function executeFinMatch(nom) {
 	})
 }
 
-function VerifierFinMatch() {
-	var finMatch = false;
-
-	//	Ligne
-
-	if (finMatch == false) {
-		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-			var numeroColonne = 0;
-			var _continue = true;
-			var nom = "";
-
-			while (finMatch == false && _continue == true && numeroColonne < 3) {
-
-				if (numeroColonne == 0) {
-					if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("ordinateur") == true) {
-						nom = "ordinateur";
-					}
-					else if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("joueur") == true) {
-						nom = "joueur";
-					}
-					else {
-						_continue = false;
-					}
-				}
-				else if ($("#" + numeroLigne + "_0").hasClass(nom) == true && $("#" + numeroLigne + "_1").hasClass(nom) == true && $("#" + numeroLigne + "_2").hasClass(nom) == true) {
-					finMatch = true;
-					_continue = false;
-					executeFinMatch(nom);
-
-					for (var _numeroColonne = 0; _numeroColonne < 3; _numeroColonne++) {
-						$("#" + numeroLigne + "_" + _numeroColonne).addClass("fin");
-					}
-
-				}
-				else {
-					_continue = false;
-				}
-
-				numeroColonne++;
-			}
-		}
-	}
-
-	//	Colonne
-
-	if (finMatch == false) {
-		for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-			var numeroLigne = 0;
-			var _continue = true;
-			var nom = "";
-
-			while (finMatch == false && _continue == true && numeroLigne < 3) {
-
-				if (numeroLigne == 0) {
-					if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("ordinateur") == true) {
-						nom = "ordinateur";
-					}
-					else if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("joueur") == true) {
-						nom = "joueur";
-					}
-					else {
-						_continue = false;
-					}
-				}
-				else if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#1_" + numeroColonne).hasClass(nom) == true && $("#2_" + numeroColonne).hasClass(nom) == true) {
-					finMatch = true;
-					_continue = false;
-					executeFinMatch(nom);
-
-					for (var _numeroLigne = 0; _numeroLigne < 3; _numeroLigne++) {
-						$("#" + _numeroLigne + "_" + numeroColonne).addClass("fin");
-					}
-				}
-				else {
-					_continue = false;
-				}
-
-				numeroLigne++;
-			}
-		}
-	}
-
-	//	Diagonale haut-gauche / bas-droite
-
-	if (finMatch == false) {
-		var numero = 0;
-		var _continue = true;
-		var nom = "";
-
-		while (finMatch == false && _continue == true && numero < 3) {
-
-			if (numero == 0) {
-				if ($("#" + numero + "_" + numero).hasClass("ordinateur") == true) {
-					nom = "ordinateur";
-				}
-				else if ($("#" + numero + "_" + numero).hasClass("joueur") == true) {
-					nom = "joueur";
-				}
-				else {
-					_continue = false;
-				}
-			}
-			else if ($("#0_0").hasClass(nom) == true && $("#1_1").hasClass(nom) == true && $("#2_2").hasClass(nom) == true) {
-				finMatch = true;
-				_continue = false;
-				executeFinMatch(nom);
-
-				for (var _numero = 0; _numero < 3; _numero++) {
-					$("#" + _numero + "_" + _numero).addClass("fin");
-				}
-			}
-			else {
-				_continue = false;
-			}
-
-			numero++;
-		}
-	}
-
-	//	Diagonale haut-droite / bas-gauche
-
-	if (finMatch == false) {
-		var numeroLigne = 0;
-		var numeroColonne = 2;
-		var _continue = true;
-		var nom = "";
-
-		while (finMatch == false && _continue == true && numeroLigne < 3) {
-
-			if (numeroLigne == 0) {
-				if ($("#0_2").hasClass("ordinateur") == true) {
-					nom = "ordinateur";
-				}
-				else if ($("#0_2").hasClass("joueur") == true) {
-					nom = "joueur";
-				}
-				else {
-					_continue = false;
-				}
-			}
-			else if ($("#0_2").hasClass(nom) == true && $("#1_1").hasClass(nom) == true && $("#2_0").hasClass(nom) == true) {
-				finMatch = true;
-				_continue = false;
-				executeFinMatch(nom);
-
-				for (var _numeroLigne = 0; _numeroLigne < 3; _numeroLigne++) {
-					var _numeroColonne = 2 - _numeroLigne;
-					$("#" + _numeroLigne + "_" + _numeroColonne).addClass("fin");
-				}
-			}
-			else {
-				_continue = false;
-			}
-
-			numeroLigne++;
-			numeroColonne--;
-		}
-	}
-
-	if (finMatch == false) {
-		var matchNul = true;
-
-		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-			for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-				if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("active") == false) {
-					matchNul = false;
-				}
-			}
-		}
-
-		if (matchNul == true) {
-			for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-				for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-					$("#" + numeroLigne + "_" + numeroColonne).addClass("fin");
-				}
-			}	
-
-			executeFinMatch("aucun ne ");
-			
-			finMatch = true;		
-		}
-	}
-
-	return finMatch;
-}
-
 function OrdinateurJoue() {
 
+	//	Attaque
+
 	var pionPose = VerifierCase("ordinateur");
+
+	//	Defense
 
 	if (pionPose == false) {
 		pionPose = VerifierCase("joueur");
@@ -559,6 +331,162 @@ function OrdinateurJoue() {
 	}
 }
 
+function VerifierFinMatch() {
+	var finMatch = false;
+
+	//	Ligne
+
+	if (finMatch == false) {
+		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
+			var _continue = true;
+			var nom = "";
+
+			if ($("#" + numeroLigne + "_0").hasClass("ordinateur") == true) {
+				nom = "ordinateur";
+			}
+			else if ($("#" + numeroLigne + "_0").hasClass("joueur") == true) {
+				nom = "joueur";
+			}
+			else {
+				_continue = false;
+			}
+
+			if ($("#" + numeroLigne + "_0").hasClass(nom) == true && $("#" + numeroLigne + "_1").hasClass(nom) == true && $("#" + numeroLigne + "_2").hasClass(nom) == true) {
+				finMatch = true;
+				_continue = false;
+				executeFinMatch(nom);
+
+				for (var _numeroColonne = 0; _numeroColonne < 3; _numeroColonne++) {
+					$("#" + numeroLigne + "_" + _numeroColonne).addClass("fin");
+				}
+
+			}
+			else {
+				_continue = false;
+			}
+		}
+	}
+
+	//	Colonne
+
+	if (finMatch == false) {
+		for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
+			var _continue = true;
+			var nom = "";
+
+			if ($("#0_" + numeroColonne).hasClass("ordinateur") == true) {
+				nom = "ordinateur";
+			}
+			else if ($("#0_" + numeroColonne).hasClass("joueur") == true) {
+				nom = "joueur";
+			}
+			else {
+				_continue = false;
+			}
+
+			if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#1_" + numeroColonne).hasClass(nom) == true && $("#2_" + numeroColonne).hasClass(nom) == true) {
+				finMatch = true;
+				_continue = false;
+				executeFinMatch(nom);
+
+				for (var _numeroLigne = 0; _numeroLigne < 3; _numeroLigne++) {
+					$("#" + _numeroLigne + "_" + numeroColonne).addClass("fin");
+				}
+			}
+			else {
+				_continue = false;
+			}
+		}
+	}
+
+	//	Diagonale haut-gauche / bas-droite
+
+	if (finMatch == false) {
+		var _continue = true;
+		var nom = "";
+
+		if ($("#0_0").hasClass("ordinateur") == true) {
+			nom = "ordinateur";
+		}
+		else if ($("#0_0").hasClass("joueur") == true) {
+			nom = "joueur";
+		}
+		else {
+			_continue = false;
+		}
+
+		if ($("#0_0").hasClass(nom) == true && $("#1_1").hasClass(nom) == true && $("#2_2").hasClass(nom) == true) {
+			finMatch = true;
+			_continue = false;
+			executeFinMatch(nom);
+
+			for (var _numero = 0; _numero < 3; _numero++) {
+				$("#" + _numero + "_" + _numero).addClass("fin");
+			}
+		}
+		else {
+			_continue = false;
+		}
+	}
+
+	//	Diagonale haut-droite / bas-gauche
+
+	if (finMatch == false) {
+		var _continue = true;
+		var nom = "";
+
+			if ($("#0_2").hasClass("ordinateur") == true) {
+				nom = "ordinateur";
+			}
+			else if ($("#0_2").hasClass("joueur") == true) {
+				nom = "joueur";
+			}
+			else {
+				_continue = false;
+			}
+
+			if ($("#0_2").hasClass(nom) == true && $("#1_1").hasClass(nom) == true && $("#2_0").hasClass(nom) == true) {
+				finMatch = true;
+				_continue = false;
+				executeFinMatch(nom);
+
+				for (var _numeroLigne = 0; _numeroLigne < 3; _numeroLigne++) {
+					var _numeroColonne = 2 - _numeroLigne;
+					$("#" + _numeroLigne + "_" + _numeroColonne).addClass("fin");
+				}
+			}
+			else {
+				_continue = false;
+			}
+	}
+
+	if (finMatch == false) {
+		var matchNul = true;
+
+		for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
+			for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
+				if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("active") == false) {
+					matchNul = false;
+				}
+			}
+		}
+
+		if (matchNul == true) {
+			for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
+				for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
+					$("#" + numeroLigne + "_" + numeroColonne).addClass("fin");
+				}
+			}	
+
+			executeFinMatch("aucun ne ");
+			
+			finMatch = true;		
+		}
+	}
+
+	return finMatch;
+}
+
 $(document).ready(function() {
 	CreerPlateau();
 
@@ -574,6 +502,17 @@ $(document).ready(function() {
 
 			ModifierValeurPlateau(numeroLigne, numeroColonne);
 			AfficherValeurPlateau();
+
+			utileAttaque[0][numeroLigne] = false;
+			utileAttaque[1][numeroColonne] = false;
+
+			if (numeroLigne == numeroColonne) {
+				utileAttaque[2] = false;
+			}
+
+			if (numeroColonne == (2 - numeroLigne)) {
+				utileAttaque[3] = false;
+			}
 
 			$(this).html("");
 			$(this).addClass("active");
