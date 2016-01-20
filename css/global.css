@@ -1,0 +1,93 @@
+.select {
+	width: 40%;
+	margin-left: calc(5% - 1px);
+	margin-right: calc(5% - 2px);
+	height: auto;
+	float: left;
+	border: 1px solid black;
+	cursor: pointer;
+}
+
+.select:hover, .fin {
+	background: silver !important;
+}
+
+.select h3 {
+	padding: 25px;
+	text-align: center;
+}
+
+.case {
+	float: left;
+}
+
+.case:hover {
+	background: silver;
+	cursor: pointer;
+}
+
+.active:hover {
+	background: white;
+	cursor: default;
+}
+
+.case_top {
+	border-top: 1px solid black;
+}
+
+.case_left {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
+}
+
+.case_default {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.case p {
+	margin: 0px;
+	text-align: center;
+}
+
+.croix {
+	width: 80%;
+	height: 1px;
+	margin-top: calc(50% - 1px);
+	margin-left: 10%;
+	background: black;
+}
+
+.croix1 {
+	transform: rotate(45deg);
+}
+
+.croix2 {
+	transform: rotate(-45deg);
+	margin-top: 0%;
+}
+
+.rond {
+	width: 80%;
+	height: 80%;
+	margin-top: 10%;
+	margin-left: 10%;
+	border-radius: 50%;
+	border: 1px solid black;
+}
+
+h1 {
+	text-align: center;
+	width: 100%;
+	top: 25px;
+	position: absolute;
+}
+
+#refresh {
+    position: absolute;
+    width: 20%;
+    left: 40%;
+    padding: 10px;
+    top: 110px;
+}
