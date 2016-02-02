@@ -84,7 +84,7 @@ h1 {
 	position: absolute;
 }
 
-button {
+#refresh {
     position: absolute;
     width: 20%;
     left: 40%;

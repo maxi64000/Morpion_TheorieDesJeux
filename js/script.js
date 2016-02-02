@@ -1,22 +1,11 @@
-//	La variable permet d'obtenir la probabilitée de chance de gagner pour l'ordinateur
-//	Elle évolue à chaque fois que le joueur pose un pion
-
 var plateau = [
 	[3/8, 2/8, 3/8],
 	[2/8, 4/8, 2/8],
 	[3/8, 2/8, 3/8],
 ];
 
-
-//	La variable permet de savoir si une ligne, colonne, diagonale est utilise à vérifier lorsuqe l'ordinateur joue
-//	Elle évolue à chaque fois que le joueur pose un pion (pour la variable utileAttaque)
-//	Elle évolue à chaque fois que l'ordinateur pose un pion (pour la variable utileDefense)
-
 var utileAttaque = [[true, true, true], [true, true, true], true, true];
 var utileDefense = [[true, true, true], [true, true, true], true, true];
-
-
-//	Permet de redimensionner la taille du plateau
 
 function RedimensionnerPlateau() {
 	$("body").append("<div id='plateau'></div>");
@@ -33,17 +22,11 @@ function RedimensionnerPlateau() {
 
 	var tailleCase = (taillePlateau / 3) - 2;
 
-
-	//	Modification taille plateau
-
 	$("#plateau").width(taillePlateau);
 	$("#plateau").height(taillePlateau);
 
 	$("#plateau").css("margin-top", marginTop + "px");
 	$("#plateau").css("margin-left", marginLeft + "px");	
-
-
-	//	Modification taille case
 
 	$(".case").width(tailleCase);
 	$(".case").height(tailleCase);
@@ -51,19 +34,8 @@ function RedimensionnerPlateau() {
 	$(".case p").css("line-height", tailleCase + "px");
 }
 
-
-//	Permet de créer le plateau
-
 function CreerPlateau() {
 	var classe = "";
-
-	$("body").append("<button id='ordinateurCommence'>L'ordinateur commence</button>");
-
-
-	$("#ordinateurCommence").click(function() {
-		OrdinateurJoue();	
-		$(this).hide();
-	})
 
 	$("body").append("<div id='plateau'></div>");
 
@@ -89,9 +61,6 @@ function CreerPlateau() {
 	RedimensionnerPlateau();
 }
 
-
-//	Permet de mettre à jour les probabilitées affichées dans les cases
-
 function AfficherValeurPlateau() {
 	for (var numeroLigne = 0; numeroLigne < plateau.length; numeroLigne++) {
 		for (var numeroColonne = 0; numeroColonne < plateau[numeroLigne].length; numeroColonne++) {
@@ -104,9 +73,6 @@ function AfficherValeurPlateau() {
 	RedimensionnerPlateau();
 }
 
-
-//	Permet de modifier les probabilitées dans une case
-
 function ModifierValeurCase(numeroLigne, numeroColonne) {
 	if ((plateau[numeroLigne][numeroColonne] > 0 || plateau[numeroLigne][numeroColonne] != null)) {
 		plateau[numeroLigne][numeroColonne] = plateau[numeroLigne][numeroColonne] - (1 / 8);
@@ -116,9 +82,6 @@ function ModifierValeurCase(numeroLigne, numeroColonne) {
 		}
 	}
 }
-
-
-//	permet de modifier les probabilitées pour tout le plateau
 
 function ModifierValeurPlateau(numeroLigne, numeroColonne) {
 
@@ -155,9 +118,6 @@ function ModifierValeurPlateau(numeroLigne, numeroColonne) {
 	}
 }
 
-
-//	permet d'obtenir la probabilitée maximum
-
 function ProbabiliteMaximum() {
 	var probabiliteMax = 0;
 
@@ -171,9 +131,6 @@ function ProbabiliteMaximum() {
 
 	return probabiliteMax;
 }
-
-
-//	Permet d'afficher le pion de l'ordinateur sur le plateau
 
 function OrdinateurPosePion(numeroLigne, numeroColonne) {
 	$("#" + numeroLigne + "_" + numeroColonne).html("");
@@ -195,18 +152,17 @@ function OrdinateurPosePion(numeroLigne, numeroColonne) {
 	}
 }
 
-
-//	Vérifie les cases du plateau pour que l'ordinateur choisisse la meilleur option
-//	La vérification peut êter fait en attaque (nom = ordiateur) et en defense (nom = joueur)
-
 function VerifierCase(nom) {
 	var pionPose = false;
 
 	if (nom == "ordinateur") {
 		utile = utileAttaque;
+
+		console.log("ATTAQUE");
 	}
 	else {
 		utile = utileDefense;
+		console.log("DEFENSE");
 	}
 
 	//	Ligne
@@ -248,7 +204,7 @@ function VerifierCase(nom) {
 			var _numeroLignePose = null;
 
 			if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#1_" + numeroColonne).hasClass(nom) == true) {
-				_numeroLignePose = 2;
+				_numeroColonnePose = 2;
 			}
 			else if ($("#0_" + numeroColonne).hasClass(nom) == true && $("#2_" + numeroColonne).hasClass(nom) == true) {
 				_numeroLignePose = 1;
@@ -303,8 +259,6 @@ function VerifierCase(nom) {
 		if ($("#0_2").hasClass(nom) == true && $("#1_1").hasClass(nom) == true) {
 			_numeroLignePose = 2;
 			_numeroColonnePose = 0;
-
-			console.log("ok2");
 		}
 		else if ($("#0_2").hasClass(nom) == true && $("#2_0").hasClass(nom) == true) {
 			_numeroLignePose = 1;
@@ -315,7 +269,7 @@ function VerifierCase(nom) {
 			_numeroColonnePose = 2;
 		}
 
-		if (_numeroLignePose != null && $("#" + _numeroLignePose + "_" + _numeroColonnePose).hasClass("active") == false) {
+		if (_numeroLignePose != null && $("#" + _numeroLignePose + "_" + _numeroLignePose).hasClass("active") == false) {
 			OrdinateurPosePion(_numeroLignePose, _numeroColonnePose)
 
 			pionPose = true;
@@ -326,8 +280,18 @@ function VerifierCase(nom) {
 
 }
 
+function executeFinMatch(nom) {
+	for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
+		for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
+			$("#" + numeroLigne + "_" + numeroColonne).addClass("active");
+		}
+	}
+	$("body").prepend("<h1>" + nom + " gagne !</h1><button id='refresh'>Recommencer</button>");
 
-//	Phase de jeux de l'ordinateur
+	$("#refresh").click(function() {
+		location.reload();
+	})
+}
 
 function OrdinateurJoue() {
 
@@ -366,28 +330,6 @@ function OrdinateurJoue() {
 		}
 	}
 }
-
-
-//	Affiche la fin du match
-
-function executeFinMatch(nom) {
-	for (var numeroLigne = 0; numeroLigne < 3; numeroLigne++) {
-		for (var numeroColonne = 0; numeroColonne < 3; numeroColonne++) {
-			$("#" + numeroLigne + "_" + numeroColonne).addClass("active");
-		}
-	}
-	$("body").prepend("<h1>" + nom + " gagne !</h1><button id='refresh'>Recommencer</button>");
-
-
-	//	permet de recommencer une partie
-
-	$("#refresh").click(function() {
-		location.reload();
-	})
-}
-
-
-//	Vérifie si le match est terminée
 
 function VerifierFinMatch() {
 	var finMatch = false;
@@ -545,24 +487,14 @@ function VerifierFinMatch() {
 	return finMatch;
 }
 
-
-//	Au chargement de la page
-
 $(document).ready(function() {
-
-
-	//	Initialisation
-
 	CreerPlateau();
 
-
-	//	Joueur joue
+	var nombreDeTours = 0;
 
 	$(".case").click(function() {
 
-		if ($("#ordinateurCommence").css("display") != "none") {
-			$("#ordinateurCommence").hide();
-		}
+		nombreDeTours++;
 
 		if ($(this).hasClass("active") == false) {
 			var numeroLigne = parseInt($(this).attr("id").split("_")[0]);
@@ -570,9 +502,6 @@ $(document).ready(function() {
 
 			ModifierValeurPlateau(numeroLigne, numeroColonne);
 			AfficherValeurPlateau();
-
-
-			//	Mise à jour de l'utilitée de vérifier les lignes, colonnes, et diagonales
 
 			utileAttaque[0][numeroLigne] = false;
 			utileAttaque[1][numeroColonne] = false;
@@ -584,8 +513,6 @@ $(document).ready(function() {
 			if (numeroColonne == (2 - numeroLigne)) {
 				utileAttaque[3] = false;
 			}
-
-			console.log(utileAttaque)
 
 			$(this).html("");
 			$(this).addClass("active");
