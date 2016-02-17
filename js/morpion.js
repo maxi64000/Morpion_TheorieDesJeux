@@ -47,8 +47,6 @@ function RedimensionnerPlateau() {
 
 	$(".case").width(tailleCase);
 	$(".case").height(tailleCase);
-
-	$(".case p").css("line-height", tailleCase + "px");
 }
 
 
@@ -82,22 +80,7 @@ function CreerPlateau() {
 				classe = "case case_default";
 			}
 
-			$("#plateau").append("<div id='" + numeroLigne + "_" + numeroColonne + "' class='" + classe + "'><p>" + plateau[numeroLigne][numeroColonne] + "</p></div>");
-		}
-	}
-
-	RedimensionnerPlateau();
-}
-
-
-//	Permet de mettre à jour les probabilitées affichées dans les cases
-
-function AfficherValeurPlateau() {
-	for (var numeroLigne = 0; numeroLigne < plateau.length; numeroLigne++) {
-		for (var numeroColonne = 0; numeroColonne < plateau[numeroLigne].length; numeroColonne++) {
-			if ($("#" + numeroLigne + "_" + numeroColonne).hasClass("active") == false ) {
-				$("#" + numeroLigne + "_" + numeroColonne).html("<p>" + plateau[numeroLigne][numeroColonne] + "</p>");
-			}
+			$("#plateau").append("<div id='" + numeroLigne + "_" + numeroColonne + "' class='" + classe + "'></div>");
 		}
 	}
 
@@ -569,7 +552,6 @@ $(document).ready(function() {
 			var numeroColonne = parseInt($(this).attr("id").split("_")[1]);
 
 			ModifierValeurPlateau(numeroLigne, numeroColonne);
-			AfficherValeurPlateau();
 
 
 			//	Mise à jour de l'utilitée de vérifier les lignes, colonnes, et diagonales
@@ -584,8 +566,6 @@ $(document).ready(function() {
 			if (numeroColonne == (2 - numeroLigne)) {
 				utileAttaque[3] = false;
 			}
-
-			console.log(utileAttaque)
 
 			$(this).html("");
 			$(this).addClass("active");
